@@ -4,13 +4,18 @@ const socketIO = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 
-const users = new Map(); // stores username -> socket.id mapping
+const users = new Map();
 
 io.on('connection', (socket) => {
     let username = '';

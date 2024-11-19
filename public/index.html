@@ -210,7 +210,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        const socket = io(window.location.origin);
         let username = '';
         let recipient = '';
         const messageInput = document.getElementById("messageInput");
