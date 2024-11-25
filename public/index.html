@@ -267,7 +267,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- Previous JavaScript code remains the same -->
     <script>
-        const socket = io();
+        const socket = io(window.location.origin);
         let username = '';
         let currentRoom = '';
 
