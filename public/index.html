@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,314 +15,337 @@
 
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100vh;
             padding: 20px;
         }
 
         .container {
             max-width: 1000px;
-            width: 95%;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            backdrop-filter: blur(10px);
         }
 
-        h1 {
+        h1, h3 {
             text-align: center;
-            padding: 25px;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
+            margin: 0;
         }
 
-        #name {
-            font-weight: 400;
-            opacity: 0.9;
-            font-size: 18px;
-        }
-
-        #login, #roomJoin {
-            padding: 40px;
-            text-align: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
+        .section {
+            padding: 20px;
         }
 
         input {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e1e1e1;
-            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #eee;
+            border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
         }
 
         input:focus {
-            border-color: #667eea;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
         }
 
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
             width: 100%;
-            max-width: 200px;
+            margin: 10px 0;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0.9;
         }
 
-        #chatRoom {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 80vh;
+        #roomList {
+            margin-top: 20px;
         }
 
-        .chat-header {
-            padding: 15px 20px;
+        .room-card {
             background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        #roomInfo {
-            font-size: 18px;
-            color: #667eea;
-            font-weight: 500;
+        .room-card:hover {
+            transform: translateY(-2px);
+            background: #eef0f2;
         }
 
-        #userCount {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
+        .room-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         #messages {
-            flex-grow: 1;
+            height: 400px;
             overflow-y: auto;
             padding: 20px;
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid #eee;
-            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
         }
 
         .message {
             margin: 10px 0;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 10px;
+            border-radius: 8px;
             max-width: 80%;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-message {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
             margin-left: auto;
-            border-bottom-right-radius: 4px;
         }
 
         .other-message {
-            background: #f5f5f5;
-            color: #333;
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
+            background: #e9ecef;
         }
 
         .system-message {
             text-align: center;
             color: #666;
             font-style: italic;
-            font-size: 14px;
-            margin: 15px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 20px;
+            padding: 5px;
         }
 
         .chat-input {
             display: flex;
             gap: 10px;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #eee;
         }
 
-        #messageInput {
+        .chat-input input {
             flex-grow: 1;
+            margin: 0;
         }
 
-        .timestamp {
-            font-size: 12px;
-            opacity: 0.7;
-            margin-top: 5px;
+        .chat-input button {
+            width: auto;
+            margin: 0;
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
+        #passwordModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #767676;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                width: 100%;
-                height: 100vh;
-                border-radius: 0;
-            }
-
-            #chatRoom {
-                height: calc(100vh - 100px);
-            }
-
-            .message {
-                max-width: 90%;
-            }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Chat Room <span id="name"></span></h1>
+        <h1>Chat Room <span id="username-display"></span></h1>
         
-        <div id="login">
-            <div class="input-group">
-                <input type="text" id="usernameInput" placeholder="Enter your username">
-            </div>
-            <button onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Continue
-            </button>
+        <!-- Login Section -->
+        <div id="login-section" class="section">
+            <input type="text" id="username" placeholder="Enter your username">
+            <button onclick="login()">Join Chat</button>
         </div>
 
-        <div id="roomJoin" style="display:none;">
-            <div class="input-group">
-                <input type="text" id="roomInput" placeholder="Enter room name">
+        <!-- Room Directory -->
+        <div id="room-directory" class="section" style="display: none;">
+            <div class="create-room">
+                <h3>Create New Room</h3>
+                <input type="text" id="new-room-name" placeholder="Room name">
+                <input type="password" id="room-password" placeholder="Password (optional)">
+                <button onclick="createRoom()">Create Room</button>
             </div>
-            <button onclick="joinRoom()">
-                <i class="fas fa-door-open"></i> Join Room
-            </button>
+
+            <h3>Available Rooms</h3>
+            <div id="roomList"></div>
         </div>
 
-        <div id="chatRoom" style="display:none;">
-            <div class="chat-header">
-                <div id="roomInfo"></div>
-                <div id="userCount"></div>
-            </div>
+        <!-- Chat Room -->
+        <div id="chat-room" class="section" style="display: none;">
+            <div id="room-name"></div>
             <div id="messages"></div>
             <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="Type your message...">
-                <button onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <input type="text" id="message-input" placeholder="Type your message...">
+                <button onclick="sendMessage()">Send</button>
             </div>
+        </div>
+
+        <!-- Password Modal -->
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div id="passwordModal">
+            <h3>Enter Room Password</h3>
+            <input type="password" id="password-input" placeholder="Password">
+            <button onclick="submitPassword()">Join Room</button>
+            <button onclick="closePasswordModal()" style="background: #dc3545;">Cancel</button>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <!-- Previous JavaScript code remains the same -->
     <script>
         const socket = io(window.location.origin);
         let username = '';
-        let currentRoom = '';
+        let selectedRoom = '';
 
+        // Login
         function login() {
-            const usernameInput = document.getElementById('usernameInput');
-            username = usernameInput.value.trim();
-            
-            if(username) {
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('roomJoin').style.display = 'block';
-                document.getElementById('name').innerText = `(${username})`;
+            username = document.getElementById('username').value.trim();
+            if (username) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('room-directory').style.display = 'block';
+                document.getElementById('username-display').textContent = `(${username})`;
                 socket.emit('login', username);
             }
         }
 
-        function joinRoom() {
-            const roomInput = document.getElementById('roomInput');
-            const room = roomInput.value.trim();
+        // Create Room
+        function createRoom() {
+            const roomName = document.getElementById('new-room-name').value.trim();
+            const password = document.getElementById('room-password').value.trim();
             
-            if(room) {
-                currentRoom = room;
-                document.getElementById('roomJoin').style.display = 'none';
-                document.getElementById('chatRoom').style.display = 'flex';
-                document.getElementById('roomInfo').innerText = `Room: ${room}`;
-                document.getElementById('messageInput').focus();
-                document.getElementById('messages').innerHTML = '';
-                socket.emit('joinRoom', { room, username });
+            if (roomName) {
+                socket.emit('createRoom', { roomName, password });
+                document.getElementById('new-room-name').value = '';
+                document.getElementById('room-password').value = '';
             }
         }
 
-        function formatTime() {
-            const now = new Date();
-            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // Join Room
+        function joinRoom(roomName, password = '') {
+            socket.emit('joinRoom', {
+                room: roomName,
+                username: username,
+                password: password
+            });
         }
 
+        // Password Modal
+        function showPasswordModal(roomName) {
+            selectedRoom = roomName;
+            document.getElementById('modal-backdrop').style.display = 'block';
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('password-input').focus();
+        }
+
+        function submitPassword() {
+            const password = document.getElementById('password-input').value;
+            joinRoom(selectedRoom, password);
+            closePasswordModal();
+        }
+
+        function closePasswordModal() {
+            document.getElementById('modal-backdrop').style.display = 'none';
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('password-input').value = '';
+        }
+
+        // Send Message
         function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
+            const messageInput = document.getElementById('message-input');
             const message = messageInput.value.trim();
-            if (message && currentRoom) {
-                socket.emit('chatMessage', {
-                    room: currentRoom,
-                    message: message,
-                    username: username
-                });
+            if (message) {
+                socket.emit('chatMessage', { message });
                 messageInput.value = '';
             }
         }
 
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+        // Enter key handlers
+        document.getElementById('username').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        document.getElementById('password-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitPassword();
+        });
+
+        // Socket event handlers
+        socket.on('roomList', (rooms) => {
+            const roomList = document.getElementById('roomList');
+            roomList.innerHTML = '';
+            rooms.forEach(room => {
+                const div = document.createElement('div');
+                div.className = 'room-card';
+                div.innerHTML = `
+                    <div class="room-info">
+                        <span>${room.name}</span>
+                        <span>${room.userCount} users</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    if (room.isProtected) {
+                        showPasswordModal(room.name);
+                    } else {
+                        joinRoom(room.name);
+                    }
+                };
+                roomList.appendChild(div);
+            });
+        });
+
+        socket.on('joinSuccess', (roomName) => {
+            document.getElementById('room-directory').style.display = 'none';
+            document.getElementById('chat-room').style.display = 'block';
+            document.getElementById('room-name').textContent = `Room: ${roomName}`;
+            document.getElementById('message-input').focus();
+        });
+
+        socket.on('message', (data) => {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${data.username === username ? 'user-message' : 'other-message'}`;
+            div.textContent = `${data.username}: ${data.message}`;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        socket.on('systemMessage', (message) => {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = 'system-message';
+            div.textContent = message;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
         });
 
         socket.on('previousMessages', (messages) => {
             const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
             messages.forEach(msg => {
                 const div = document.createElement('div');
                 if (msg.type === 'system') {
@@ -331,40 +353,19 @@
                     div.textContent = msg.content;
                 } else {
                     div.className = `message ${msg.username === username ? 'user-message' : 'other-message'}`;
-                    div.innerHTML = `
-                        ${msg.username}: ${msg.content}
-                        <div class="timestamp">${formatTime()}</div>
-                    `;
+                    div.textContent = `${msg.username}: ${msg.content}`;
                 }
                 messagesDiv.appendChild(div);
             });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
 
-        socket.on('message', (data) => {
-            const messagesDiv = document.getElementById('messages');
-            const div = document.createElement('div');
-            div.className = `message ${data.username === username ? 'user-message' : 'other-message'}`;
-            div.innerHTML = `
-                ${data.username}: ${data.message}
-                <div class="timestamp">${formatTime()}</div>
-            `;
-            messagesDiv.appendChild(div);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        socket.on('passwordRequired', () => {
+            showPasswordModal(selectedRoom);
         });
 
-        socket.on('systemMessage', (message) => {
-            const messagesDiv = document.getElementById('messages');
-            const div = document.createElement('div');
-            div.className = 'system-message';
-            div.textContent = message;
-            messagesDiv.appendChild(div);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        });
-
-        socket.on('userCount', (data) => {
-            document.getElementById('userCount').textContent = 
-                `Users in room: ${data.count}`;
+        socket.on('error', (message) => {
+            alert(message);
         });
     </script>
 </body>
