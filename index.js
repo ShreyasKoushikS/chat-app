@@ -15,45 +15,93 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 
-const users = new Map();
+// Store rooms and messages
+const rooms = new Map();
+const roomMessages = new Map();
 
 io.on('connection', (socket) => {
-    let username = '';
+    let currentRoom = '';
+    let currentUser = '';
 
-    socket.on('login', (user) => {
-        if (users.has(user)) {
-            socket.emit('loginError', 'Username is already taken');
-        } else {
-            username = user;
-            users.set(username, socket.id);
-            console.log(`${username} logged in`);
-        }
+    socket.on('login', (username) => {
+        currentUser = username;
+        console.log(`${username} logged in`);
     });
 
-    socket.on('startChat', (recipient) => {
-        if (!users.has(recipient)) {
-            socket.emit('chatError', 'User not found');
-        } else {
-            console.log(`${username} started chat with ${recipient}`);
+    socket.on('joinRoom', ({ room, username }) => {
+        currentRoom = room;
+        currentUser = username;
+        
+        socket.join(room);
+        
+        if (!rooms.has(room)) {
+            rooms.set(room, new Set());
+            roomMessages.set(room, []);
         }
+        
+        rooms.get(room).add(username);
+        
+        // Send previous messages
+        const messages = roomMessages.get(room);
+        socket.emit('previousMessages', messages);
+        
+        // System message for join
+        const joinMessage = {
+            type: 'system',
+            content: `${username} joined the room`,
+            timestamp: new Date().toISOString()
+        };
+        roomMessages.get(room).push(joinMessage);
+        io.to(room).emit('systemMessage', joinMessage.content);
+        
+        io.to(room).emit('userCount', {
+            room: room,
+            count: rooms.get(room).size
+        });
+
+        console.log(`${username} joined room ${room}`);
     });
 
-    socket.on('message', (data) => {
-        const recipientSocketId = users.get(data.to);
-        if (recipientSocketId) {
-            io.to(recipientSocketId).emit('message', {
-                from: username,
-                text: data.text
-            });
-        } else {
-            socket.emit('userOffline');
-        }
+    socket.on('chatMessage', (data) => {
+        const messageData = {
+            type: 'message',
+            username: data.username,
+            content: data.message,
+            timestamp: new Date().toISOString()
+        };
+        
+        roomMessages.get(data.room).push(messageData);
+        
+        io.to(data.room).emit('message', {
+            username: data.username,
+            message: data.message,
+            timestamp: messageData.timestamp
+        });
     });
 
     socket.on('disconnect', () => {
-        if (username) {
-            console.log(`${username} disconnected`);
-            users.delete(username);
+        if (currentRoom && currentUser) {
+            if (rooms.has(currentRoom)) {
+                rooms.get(currentRoom).delete(currentUser);
+                
+                const leaveMessage = {
+                    type: 'system',
+                    content: `${currentUser} left the room`,
+                    timestamp: new Date().toISOString()
+                };
+                roomMessages.get(currentRoom).push(leaveMessage);
+                
+                if (rooms.get(currentRoom).size === 0) {
+                    rooms.delete(currentRoom);
+                } else {
+                    io.to(currentRoom).emit('systemMessage', leaveMessage.content);
+                    io.to(currentRoom).emit('userCount', {
+                        room: currentRoom,
+                        count: rooms.get(currentRoom).size
+                    });
+                }
+            }
+            console.log(`${currentUser} left room ${currentRoom}`);
         }
     });
 });
