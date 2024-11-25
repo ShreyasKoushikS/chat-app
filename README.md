@@ -5,10 +5,11 @@ A simple real-time chat application built with Node.js, Express, and Socket.IO t
 ## Features
 
 - Real-time messaging
-- One-to-one chat functionality
+- Chatroom functionality
 - Simple and clean user interface
 - User presence detection
 - Instant message delivery
+- Optional password protected rooms
 
 ## Live Demo
 
